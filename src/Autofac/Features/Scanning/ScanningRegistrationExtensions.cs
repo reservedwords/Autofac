@@ -83,6 +83,7 @@ namespace Autofac.Features.Scanning
                     t.GetTypeInfo().IsClass &&
                     !t.GetTypeInfo().IsAbstract &&
                     !t.GetTypeInfo().IsGenericTypeDefinition &&
+                    IsNotPrivateOrProtected(t) &&
                     !t.IsDelegate() &&
                     !t.IsCompilerGenerated() &&
                     rb.ActivatorData.Filters.All(p => p(t))))
@@ -104,6 +105,13 @@ namespace Autofac.Features.Scanning
 
             foreach (var postScanningCallback in rb.ActivatorData.PostScanningCallbacks)
                 postScanningCallback(cr);
+        }
+
+        private static bool IsNotPrivateOrProtected(Type type)
+        {
+            return !type.GetTypeInfo().IsNestedPrivate &&
+                   !type.GetTypeInfo().IsNestedFamily &&
+                   !type.GetTypeInfo().IsNestedFamANDAssem;
         }
 
         public static IRegistrationBuilder<TLimit, TScanningActivatorData, TRegistrationStyle>
