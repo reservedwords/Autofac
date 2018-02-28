@@ -7,9 +7,14 @@
 
         }
 
+        protected class ProtectedNestedComponent : IImplementedByProtectedNestedComponent
+        {
+
+        }
+
         private class PrivateNestedComponent : IImplementedByPrivateNestedComponent
         {
-            
+
         }
     }
 }
