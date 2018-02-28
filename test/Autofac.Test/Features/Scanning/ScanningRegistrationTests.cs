@@ -18,7 +18,7 @@ namespace Autofac.Test.Features.Scanning
         private static readonly Assembly ScenarioAssembly = typeof(AComponent).GetTypeInfo().Assembly;
 
         [Fact]
-        public void WhenAssemblyIsScannedTypesRegisteredByDefault()
+        public void WhenAssemblyIsScannedPublicTypesAreRegisteredByDefault()
         {
             var cb = new ContainerBuilder();
             cb.RegisterAssemblyTypes(typeof(AComponent).GetTypeInfo().Assembly);
@@ -28,6 +28,50 @@ namespace Autofac.Test.Features.Scanning
             c.AssertSharing<AComponent>(InstanceSharing.None);
             c.AssertLifetime<AComponent, CurrentScopeLifetime>();
             c.AssertOwnership<AComponent>(InstanceOwnership.OwnedByLifetimeScope);
+        }
+
+        [Fact]
+        public void WhenAssemblyIsScannedInternalTypesAreRegisteredByDefault()
+        {
+            var cb = new ContainerBuilder();
+            cb.RegisterAssemblyTypes(typeof(AComponent).GetTypeInfo().Assembly)
+                .AsImplementedInterfaces();
+            var c = cb.Build();
+
+            c.AssertRegistered<IImplementedByInternalComponent>();
+        }
+
+        [Fact]
+        public void WhenAssemblyIsScannedPublicNestedTypesAreRegisteredByDefault()
+        {
+            var cb = new ContainerBuilder();
+            cb.RegisterAssemblyTypes(typeof(AComponent).GetTypeInfo().Assembly)
+                .AsImplementedInterfaces();
+            var c = cb.Build();
+
+            c.AssertRegistered<IImplementedByPublicNestedComponent>();
+        }
+
+        [Fact]
+        public void WhenAssemblyIsScannedPrivateNestedTypesAreNotRegisteredByDefault()
+        {
+            var cb = new ContainerBuilder();
+            cb.RegisterAssemblyTypes(typeof(AComponent).GetTypeInfo().Assembly)
+                .AsImplementedInterfaces();
+            var c = cb.Build();
+
+            c.AssertNotRegistered<IImplementedByPrivateNestedComponent>();
+        }
+
+        [Fact]
+        public void WhenAssemblyIsScannedProtectedNestedTypesAreNotRegisteredByDefault()
+        {
+            var cb = new ContainerBuilder();
+            cb.RegisterAssemblyTypes(typeof(AComponent).GetTypeInfo().Assembly)
+                .AsImplementedInterfaces();
+            var c = cb.Build();
+
+            c.AssertNotRegistered<IImplementedByProtectedNestedComponent>();
         }
 
         [Fact]
